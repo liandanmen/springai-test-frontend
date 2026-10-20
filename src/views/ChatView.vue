@@ -183,7 +183,7 @@ export default {
           message: msg,
           chatId: this.chatId
         })
-        session.messages.push({ role: 'ai', content: res.data })
+        session.messages.push({ role: 'ai', content: res.data.data })
       } catch (err) {
         session.messages.push({ role: 'ai', content: '❌ 请求失败：' + err.message })
       } finally {
