@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { http, unwrapResult } from '../api/request'
 import { Close } from '@element-plus/icons-vue'
 
 export default {
@@ -179,11 +179,11 @@ export default {
       this.scrollToBottom()
 
       try {
-        const res = await axios.post('http://localhost:8081/api/ai/chat', {
+        const res = await http.post('/api/ai/chat', {
           message: msg,
           chatId: this.chatId
         })
-        session.messages.push({ role: 'ai', content: res.data.data })
+        session.messages.push({ role: 'ai', content: unwrapResult(res) })
       } catch (err) {
         session.messages.push({ role: 'ai', content: '❌ 请求失败：' + err.message })
       } finally {

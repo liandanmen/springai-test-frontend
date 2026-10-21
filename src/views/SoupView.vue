@@ -85,10 +85,10 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { http, unwrapResult } from '../api/request'
 import { Close } from '@element-plus/icons-vue'
 
-const BASE = 'http://localhost:8081/api/soup'
+const BASE = '/api/soup'
 
 export default {
   components: { Close },
@@ -116,18 +116,19 @@ export default {
     },
     async loadSessions() {
       try {
-        const res = await axios.get(`${BASE}/sessions`)
-        this.sessions = res.data
+        const res = await http.get(`${BASE}/sessions`)
+        this.sessions = unwrapResult(res)
       } catch (e) { console.error(e) }
     },
     // 新开一局
     async newGame() {
       const id = this.genId()
       try {
-        const res = await axios.post(`${BASE}/start`, { gameId: id })
-        this.sessions.unshift({ id, title: res.data.surface.slice(0, 12) + '...', status: 'playing' })
+        const res = await http.post(`${BASE}/start`, { gameId: id })
+        const data = unwrapResult(res)
+        this.sessions.unshift({ id, title: data.surface.slice(0, 12) + '...', status: 'playing' })
         this.gameId = id
-        this.surface = res.data.surface
+        this.surface = data.surface
         this.myStory = ''
         this.secret = ''
         this.messages = []
@@ -137,10 +138,11 @@ export default {
     async switchGame(id) {
       this.gameId = id
       try {
-        const res = await axios.get(`${BASE}/${id}`)
-        this.surface = res.data.surface
-        this.secret = res.data.secret || ''
-        this.messages = res.data.messages.map(m => ({
+        const res = await http.get(`${BASE}/${id}`)
+        const data = unwrapResult(res)
+        this.surface = data.surface
+        this.secret = data.secret || ''
+        this.messages = data.messages.map(m => ({
           role: m.role === 'user' ? 'user' : 'ai',
           content: m.content
         }))
@@ -153,7 +155,7 @@ export default {
     async deleteGame(index) {
       const removed = this.sessions.splice(index, 1)[0]
       if (!removed) return
-      try { await axios.delete(`${BASE}/${removed.id}`) } catch (e) { console.error(e) }
+      try { await http.delete(`${BASE}/${removed.id}`) } catch (e) { console.error(e) }
       if (removed.id === this.gameId) {
         this.gameId = ''
         this.surface = ''
@@ -171,8 +173,8 @@ export default {
       this.loading = true
       this.scrollToBottom()
       try {
-        const res = await axios.post(`${BASE}/ask`, { gameId: this.gameId, content: q })
-        this.messages.push({ role: 'ai', content: res.data })
+        const res = await http.post(`${BASE}/ask`, { gameId: this.gameId, content: q })
+        this.messages.push({ role: 'ai', content: unwrapResult(res) })
       } catch (e) {
         this.messages.push({ role: 'ai', content: '❌ ' + e.message })
       } finally {
@@ -190,12 +192,13 @@ export default {
       this.loading = true
       this.scrollToBottom()
       try {
-        const res = await axios.post(`${BASE}/guess`, { gameId: this.gameId, content: story })
-        this.messages.push({ role: 'ai', content: res.data })
+        const res = await http.post(`${BASE}/guess`, { gameId: this.gameId, content: story })
+        const answer = unwrapResult(res)
+        this.messages.push({ role: 'ai', content: answer })
         // 判定正确 → 自动揭汤底
-        if (res.data.includes('[CORRECT]')) {
-          const r = await axios.get(`${BASE}/reveal`, { params: { gameId: this.gameId } })
-          this.secret = r.data
+        if (answer.includes('[CORRECT]')) {
+          const r = await http.get(`${BASE}/reveal`, { params: { gameId: this.gameId } })
+          this.secret = unwrapResult(r)
           const s = this.sessions.find(x => x.id === this.gameId)
           if (s) s.status = 'solved'
         }
@@ -209,8 +212,8 @@ export default {
     // 放弃，直接看汤底
     async reveal() {
       try {
-        const res = await axios.get(`${BASE}/reveal`, { params: { gameId: this.gameId } })
-        this.secret = res.data
+        const res = await http.get(`${BASE}/reveal`, { params: { gameId: this.gameId } })
+        this.secret = unwrapResult(res)
         const s = this.sessions.find(x => x.id === this.gameId)
         if (s) s.status = 'revealed'
       } catch (e) { console.error(e) }
