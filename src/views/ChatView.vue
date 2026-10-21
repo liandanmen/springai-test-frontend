@@ -67,8 +67,9 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { http, unwrapResult } from '../api/request'
 import { Close } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 export default {
   components: { Close },
@@ -80,35 +81,10 @@ export default {
       loading: false
     }
   },
-  created() {
-  const saved = localStorage.getItem('chatSessions')
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved)
-      // ✅ 兼容旧数据：确保每个 session 都有 messages 数组
-      this.sessions = parsed.map(s => ({
-        id: s.id,
-        title: s.title || '新会话',
-        messages: Array.isArray(s.messages) ? s.messages : []
-      }))
-    } catch (e) {
-      this.sessions = []
-    }
-  }
-  if (this.sessions.length > 0) {
-    this.chatId = this.sessions[0].id
-  } else {
-    this.newChat()
-  }
-  },
-
-  watch: {
-    sessions: {
-      deep: true,
-      handler(val) {
-        localStorage.setItem('chatSessions', JSON.stringify(val))
-      }
-    }
+  async created() {
+    await this.loadSessions()
+    if (this.sessions.length) await this.switchSession(this.sessions[0].id)
+    else await this.newChat()
   },
 
   computed: {
@@ -125,41 +101,56 @@ export default {
   },
   
   methods: {
-    generateChatId() {
-      if (window.crypto && crypto.randomUUID) return crypto.randomUUID()
-      return 'chat-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    async loadSessions() {
+      try {
+        const data = unwrapResult(await http.get('/api/chat_history/sessions'))
+        this.sessions = data.map(session => ({ ...session, messages: [] }))
+      } catch (error) {
+        ElMessage.error(error.response?.data?.msg || error.message || '加载会话失败')
+      }
     },
-    newChat() {
-      const id = this.generateChatId()
-      this.sessions.unshift({
-        id,
-        title: '新会话',
-        messages: []
-      })
-      this.chatId = id
-      return {id}
+    async newChat() {
+      try {
+        const session = unwrapResult(await http.post('/api/chat_history/sessions', { title: '新会话' }))
+        this.sessions.unshift(session)
+        this.chatId = session.id
+        this.scrollToBottom()
+      } catch (error) {
+        ElMessage.error(error.response?.data?.msg || error.message || '创建会话失败')
+      }
     },
-    switchSession(id) {
+    async switchSession(id) {
       this.chatId = id
+      try {
+        const session = unwrapResult(await http.get(`/api/chat_history/sessions/${id}`))
+        const localSession = this.sessions.find(item => item.id === id)
+        if (localSession) {
+          localSession.title = session.title
+          localSession.messages = session.messages
+        }
+      } catch (error) {
+        ElMessage.error(error.response?.data?.msg || error.message || '加载聊天记录失败')
+      }
       this.scrollToBottom()
     },
-    deleteSession(index) {
-      const removed = this.sessions.splice(index, 1)[0]
-      // 如果删的是当前会话，切到第一个（没有就新建）
-      if (removed.id === this.chatId) {
-        if (this.sessions.length > 0) {
-          this.chatId = this.sessions[0].id
-        } else {
-          this.newChat()
+    async deleteSession(index) {
+      const removed = this.sessions[index]
+      if (!removed) return
+      try {
+        unwrapResult(await http.delete(`/api/chat_history/sessions/${removed.id}`))
+        this.sessions.splice(index, 1)
+        if (removed.id === this.chatId) {
+          if (this.sessions.length) await this.switchSession(this.sessions[0].id)
+          else await this.newChat()
         }
+      } catch (error) {
+        ElMessage.error(error.response?.data?.msg || error.message || '删除会话失败')
       }
     },
     // 用第一条用户消息作为会话标题
     updateTitle(firstUserMsg) {
       const s = this.sessions.find(s => s.id === this.chatId)
-      if (s && s.title === '新会话') {
-        s.title = firstUserMsg.slice(0, 12) + (firstUserMsg.length > 12 ? '...' : '')
-      }
+      if (s && s.title === '新会话') s.title = firstUserMsg.slice(0, 32)
     },
     async sendMessage() {
       const msg = this.inputMessage.trim()
@@ -179,13 +170,26 @@ export default {
       this.scrollToBottom()
 
       try {
-        const res = await axios.post('http://localhost:8081/api/ai/chat', {
+        const res = await http.post('/api/ai/chat', {
           message: msg,
           chatId: this.chatId
         })
-        session.messages.push({ role: 'ai', content: res.data.data })
+        session.messages.push({ role: 'ai', content: unwrapResult(res) })
+        session.title = msg.slice(0, 32)
       } catch (err) {
-        session.messages.push({ role: 'ai', content: '❌ 请求失败：' + err.message })
+        // ai会话限流处理
+        const retryAfter = err.response?.headers?.['retry-after']
+
+        if (err.response?.status === 429) {
+          const message = retryAfter
+            ? `请求过于频繁，请 ${retryAfter} 秒后重试`
+            : '请求过于频繁，请稍后重试'
+
+          session.messages.push({ role: 'ai', content: message })
+        } else {
+          const message = err.response?.data?.msg || err.message || '请求失败'
+          session.messages.push({ role: 'ai', content: '❌ ' + message })
+        }
       } finally {
         this.loading = false
         this.scrollToBottom()
