@@ -269,119 +269,67 @@ export default {
 </script>
 
 <style scoped>
-/* 整体两栏布局 */
-.chat-app {
-  display: flex;
-  height: 100vh;
-  background: #f5f7fa;
-}
+.chat-app { display: flex; height: 100vh; background: var(--bg-page); }
 
-/* ===== 左侧侧边栏 ===== */
+/* ===== 左侧边栏（统一浅色，和文档页保持一致） ===== */
 .sidebar {
-  width: 240px;
-  background: #1f2937;
-  color: #e5e7eb;
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 16px 12px;
+  padding: var(--space-4) var(--space-3);
   box-sizing: border-box;
 }
-.new-chat-btn {
-  width: 100%;
-  margin-bottom: 16px;
-}
-.session-list {
-  flex: 1;
-  overflow-y: auto;
-}
+.new-chat-btn { width: 100%; margin-bottom: var(--space-4); }
+.session-list { flex: 1; overflow-y: auto; }
 .session-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  margin-bottom: 6px;
-  border-radius: 8px;
-  cursor: pointer;
+  gap: var(--space-2);
+  padding: 10px var(--space-3);
+  margin-bottom: var(--space-1);
+  border-radius: var(--radius-md);
+  color: var(--text-2);
   font-size: 14px;
-  transition: background 0.2s;
-}
-.session-item:hover {
-  background: #374151;
-}
-.session-item.active {
-  background: #409eff;
-  color: white;
-}
-.session-title {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.delete-icon {
-  opacity: 0;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background .2s, color .2s;
 }
-.session-item:hover .delete-icon {
-  opacity: 1;
-}
+.session-item:hover { background: var(--bg-hover); }
+.session-item.active { background: var(--color-primary-light); color: var(--color-primary); font-weight: 500; }
+.session-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.delete-icon { opacity: 0; color: var(--text-4); cursor: pointer; transition: opacity .2s, color .2s; }
+.delete-icon:hover { color: #f56c6c; }
+.session-item:hover .delete-icon { opacity: 1; }
 
 /* ===== 右侧聊天区 ===== */
 .chat-main {
   flex: 1;
+  min-width: 0;              /* 防止 flex 子项被长内容撑破布局 */
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: var(--space-5);
   box-sizing: border-box;
 }
-.header h2 {
-  margin: 0 0 10px;
-}
-.message-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px 0;
-}
-.empty-tip {
-  text-align: center;
-  color: #9ca3af;
-  margin-top: 40%;
-  font-size: 16px;
-}
-.message {
-  margin-bottom: 12px;
-  display: flex;
-}
-.message.user {
-  justify-content: flex-end;
-}
+.header h2 { margin: 0 0 var(--space-3); font-size: 18px; }
+.message-list { flex: 1; overflow-y: auto; padding: var(--space-2) 0; }
+.empty-tip { text-align: center; color: var(--text-4); margin-top: 30%; font-size: 14px; }
+.message { margin-bottom: var(--space-4); display: flex; }
+.message.user { justify-content: flex-end; }
 .bubble {
-  max-width: 70%;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: white;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  max-width: min(720px, 78%);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  line-height: 1.7;
 }
-.message.user .bubble {
-  background: #409eff;
-  color: white;
-}
-.label {
-  font-size: 12px;
-  opacity: 0.7;
-}
-.bubble p {
-  margin: 4px 0 0;
-  white-space: pre-wrap;
-}
-.input-area {
-  display: flex;
-  gap: 10px;
-  padding-top: 10px;
-  align-items: center;
-}
-.input-area .el-input {
-  flex: 1;
-}
+.message.user .bubble { background: var(--color-primary); color: #fff; box-shadow: none; }
+.label { font-size: 12px; opacity: .7; }
+.bubble p { margin: var(--space-1) 0 0; white-space: pre-wrap; word-break: break-word; }
+.input-area { display: flex; gap: var(--space-3); padding-top: var(--space-3); align-items: center; }
+.input-area .el-input { flex: 1; }
 </style>

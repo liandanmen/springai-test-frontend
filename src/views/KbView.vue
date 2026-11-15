@@ -273,88 +273,100 @@ export default {
 </script>
 
 <style scoped>
-.kb-app { display: flex; height: 100vh; background: #f5f7fa; }
-.new-btn { width: 100%; margin-bottom: 16px; }
-.sidebar-title { margin: 0; font-size: 15px; }
-.upload-tip { margin: 0; font-size: 12px; color: #909399; }
-.document-list { flex: 1; overflow-y: auto; }
-.doc-empty { color: #9ca3af; font-size: 13px; text-align: center; margin-top: 20px; }
-.document-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px; border-radius: 6px; cursor: default;
-}
-.document-item:hover { background: #f5f7fa; }
-.doc-info { flex: 1; min-width: 0; }
-.doc-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.doc-meta { font-size: 12px; color: #909399; }
-.delete-icon { cursor: pointer; color: #c0c4cc; }
-.delete-icon:hover { color: #f56c6c; }
-.kb-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  max-width: flex;
-  margin: 0 auto;
-}
-.header h2 { margin: 0 0 10px; }
-.message-list { flex: 1; overflow-y: auto; padding: 10px 0; }
-.empty-tip { text-align: center; color: #9ca3af; margin-top: 40%; font-size: 16px; }
-.message { margin-bottom: 12px; display: flex; }
-.message.user { justify-content: flex-end; }
-.bubble {
-  max-width: 70%;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: white;
-  box-shadow: 0 1px 2px rgba(0,0,0,.06);
-}
-.message.user .bubble { background: #409eff; color: white; }
-.label { font-size: 12px; opacity: .7; }
-.bubble p { margin: 4px 0 0; white-space: pre-wrap; }
-.refs { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
-.ref-title { font-size: 12px; color: #909399; }
-.ref-tag { max-width: 100%; }
-.input-area { display: flex; gap: 10px; padding-top: 10px; align-items: center; }
-.input-area .el-input { flex: 1; }
+.kb-app { display: flex; height: 100vh; background: var(--bg-page); }
+
+/* ===== 左侧文档栏 ===== */
 .kb-sidebar {
   width: 260px;
   flex-shrink: 0;
-  background: #fff;
-  border-right: 1px solid #ebeef5;
-  padding: 16px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
   overflow-y: auto;
+  box-sizing: border-box;
 }
-.answer { margin: 4px 0 0; white-space: pre-wrap; word-break: break-word; }
-.pending { color: #909399; font-size: 13px; }
+.sidebar-title { margin: 0; font-size: 15px; }
+.upload-tip { margin: 0; font-size: 12px; color: var(--text-4); }
+.document-list { flex: 1; overflow-y: auto; }
+.doc-empty { color: var(--text-4); font-size: 13px; text-align: center; margin-top: var(--space-5); }
+.document-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: background .2s;
+}
+.document-item:hover { background: var(--bg-hover); }
+.doc-info { flex: 1; min-width: 0; }
+.doc-name { font-size: 13px; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-meta { font-size: 12px; color: var(--text-4); }
+.delete-icon { cursor: pointer; color: var(--text-4); transition: color .2s; }
+.delete-icon:hover { color: #f56c6c; }
 
-/* 引用角标 */
+/* ===== 右侧问答区 ===== */
+.kb-main {
+  flex: 1;
+  min-width: 0;              /* 去掉原来无效的 max-width: flex */
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  box-sizing: border-box;
+}
+.header h2 { margin: 0 0 var(--space-3); font-size: 18px; }
+.message-list { flex: 1; overflow-y: auto; padding: var(--space-2) 0; }
+.empty-tip { text-align: center; color: var(--text-4); margin-top: 30%; font-size: 14px; }
+.message { margin-bottom: var(--space-4); display: flex; }
+.message.user { justify-content: flex-end; }
+.bubble {
+  max-width: min(720px, 78%);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.message.user .bubble { background: var(--color-primary); color: #fff; box-shadow: none; }
+.label { font-size: 12px; opacity: .7; }
+.answer { margin: var(--space-1) 0 0; white-space: pre-wrap; word-break: break-word; }
+.pending { color: var(--text-4); font-size: 13px; }
+
+.input-area { display: flex; gap: var(--space-3); padding-top: var(--space-3); align-items: center; }
+.input-area .el-input { flex: 1; }
+
+/* ===== 引用角标 ===== */
 .cite {
-  color: #409eff;
+  color: var(--color-primary);
   cursor: pointer;
   font-weight: 600;
   padding: 0 1px;
+  border-radius: 3px;
 }
-.cite:hover { text-decoration: underline; }
+.cite:hover { background: var(--color-primary-light); text-decoration: underline; }
 
-/* 引用卡片 */
+/* ===== 引用卡片 ===== */
+.refs { margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); align-items: stretch; }
+.ref-title { font-size: 12px; color: var(--text-4); }
 .ref-item {
-  border-left: 2px solid #dcdfe6;
-  padding: 4px 8px;
+  border-left: 2px solid var(--border);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  border-radius: 4px;
+  transition: background .2s, border-color .2s;
 }
-.ref-item.active { border-left-color: #409eff; background: #ecf5ff; }
-.ref-badge { color: #409eff; font-weight: 600; margin-right: 6px; font-size: 12px; }
-.ref-meta { font-size: 12px; color: #909399; }
+.ref-item:hover { background: var(--bg-hover); }
+.ref-item.active { border-left-color: var(--color-primary); background: var(--color-primary-light); }
+.ref-badge { color: var(--color-primary); font-weight: 600; margin-right: var(--space-1); font-size: 12px; }
+.ref-meta { font-size: 12px; color: var(--text-4); }
 .ref-text {
-  margin: 4px 0 0;
+  margin: var(--space-1) 0 0;
   font-size: 12px;
-  color: #606266;
+  color: var(--text-3);
+  line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

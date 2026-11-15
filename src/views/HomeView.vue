@@ -8,7 +8,9 @@
         <el-button type="primary" @click="$emit('login', 'register')">注册</el-button>
       </template>
     </div>
+
     <h1>🎮 选择模式</h1>
+
     <div class="cards">
       <div class="card" @click="$emit('select', 'chat')">
         <div class="icon">💬</div>
@@ -22,8 +24,8 @@
       </div>
       <div class="card" @click="$emit('select', 'kb')">
         <div class="icon">📚</div>
-        <h3>题库助手</h3>
-        <p>RAG 语义检索海龟汤题库，推荐与引用出处</p>
+        <h3>文档问答</h3>
+        <p>上传文档，基于内容智能问答，回答带引用出处</p>
       </div>
     </div>
   </div>
@@ -39,30 +41,77 @@ export default {
 <style scoped>
 .home {
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #f5f7fa;
+  padding: var(--space-6);
+  box-sizing: border-box;
+  background: var(--bg-page);
 }
-.home-actions { position: absolute; top: 24px; right: 32px; display: flex; align-items: center; gap: 12px; }
-.cards { display: flex; gap: 40px; margin-top: 30px; }
+
+.home-actions {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-3);
+  font-size: 14px;
+}
+
+.home h1 {
+  margin: 0 0 var(--space-6);
+  font-size: 24px;
+  letter-spacing: .5px;
+}
+
+/* 三张卡片：用 grid + auto-fit，窄屏自动换行，不再写死宽度 */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 280px));
+  justify-content: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 960px;
+}
+
 .card {
-  width: 260px;
-  padding: 40px 30px;
-  background: white;
-  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6) var(--space-5);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   text-align: center;
   cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,.08);
-  transition: transform .2s, box-shadow .2s;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
+
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
 }
-.icon { font-size: 48px; }
-.card h3 { margin: 16px 0 8px; }
-.card p { color: #909399; font-size: 14px; }
+
+.icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.card h3 {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 16px;
+}
+
+.card p {
+  margin: 0;
+  color: var(--text-3);
+  font-size: 13px;
+  line-height: 1.6;
+}
 </style>

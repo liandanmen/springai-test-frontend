@@ -350,47 +350,118 @@ export default {
 </script>
 
 <style scoped>
-.soup-app { display: flex; height: 100vh; background: #f5f7fa; }
-.sidebar { width: 240px; background: #1f2937; color: #e5e7eb; padding: 16px 12px; display: flex; flex-direction: column; box-sizing: border-box; }
-.new-btn { width: 100%; margin-bottom: 16px; }
+.soup-app { display: flex; height: 100vh; background: var(--bg-page); }
+
+/* ===== 左侧历史局 ===== */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) var(--space-3);
+  box-sizing: border-box;
+}
+.new-btn { width: 100%; margin-bottom: var(--space-4); }
 .session-list { flex: 1; overflow-y: auto; }
-.session-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; margin-bottom: 6px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-.session-item:hover { background: #374151; }
-.session-item.active { background: #409eff; color: white; }
+.session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px var(--space-3);
+  margin-bottom: var(--space-1);
+  border-radius: var(--radius-md);
+  color: var(--text-2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.session-item:hover { background: var(--bg-hover); }
+.session-item.active { background: var(--color-primary-light); color: var(--color-primary); font-weight: 500; }
 .session-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.delete-icon { opacity: 0; cursor: pointer; }
+.delete-icon { opacity: 0; color: var(--text-4); cursor: pointer; transition: opacity .2s, color .2s; }
+.delete-icon:hover { color: #f56c6c; }
 .session-item:hover .delete-icon { opacity: 1; }
 
-.main { flex: 1; display: flex; flex-direction: column; padding: 16px 20px; box-sizing: border-box; }
-.header { display: flex; align-items: center; gap: 12px; }
-.header h2 { margin: 0; }
+/* ===== 右侧主区 ===== */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  box-sizing: border-box;
+}
+.header { display: flex; align-items: center; gap: var(--space-3); }
+.header h2 { margin: 0; font-size: 18px; }
 
-.soup-panel { display: flex; gap: 12px; margin: 12px 0; }
-.panel-card { flex: 1; background: white; border-radius: 10px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06); max-height: 140px; overflow-y: auto; }
-.panel-card h4 { margin: 0 0 8px; font-size: 14px; }
-.panel-card p { margin: 0; font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
-.panel-card.surface { border-left: 4px solid #409eff; }
-.panel-card.story { border-left: 4px solid #e6a23c; }
-.panel-card.secret { border-left: 4px solid #f56c6c; }
-.muted { color: #c0c4cc; }
+/* 上方三块面板 */
+.soup-panel { display: flex; gap: var(--space-3); margin: var(--space-4) 0; }
+.panel-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-3) var(--space-4);
+  max-height: 140px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.panel-card h4 { margin: 0 0 var(--space-2); font-size: 13px; color: var(--text-3); font-weight: 600; }
+.panel-card p { margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+.panel-card.surface { border-left: 3px solid var(--color-primary); }
+.panel-card.story { border-left: 3px solid #e6a23c; }
+.panel-card.secret { border-left: 3px solid #f56c6c; }
+.muted { color: var(--text-4); }
 
-.end-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; margin-bottom: 10px; border-radius: 8px; font-size: 14px; }
+/* 结束横幅 */
+.end-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 10px var(--space-4);
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
 .end-banner.solved { background: #f0f9eb; color: #529b2e; border: 1px solid #e1f3d8; }
-.end-banner.revealed { background: #f4f4f5; color: #909399; border: 1px solid #e9e9eb; }
+.end-banner.revealed { background: var(--bg-hover); color: var(--text-3); border: 1px solid var(--border); }
 
-.message-list { flex: 1; overflow-y: auto; padding: 10px 0; }
-.empty-tip { text-align: center; color: #9ca3af; margin-top: 15%; }
-.message { margin-bottom: 12px; display: flex; }
+/* 问答记录 */
+.message-list { flex: 1; overflow-y: auto; padding: var(--space-2) 0; }
+.empty-tip { text-align: center; color: var(--text-4); margin-top: 20%; font-size: 14px; }
+.message { margin-bottom: var(--space-4); display: flex; }
 .message.user { justify-content: flex-end; }
-.bubble { max-width: 70%; padding: 10px 14px; border-radius: 10px; background: white; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-.message.user .bubble { background: #409eff; color: white; }
+.bubble {
+  max-width: min(720px, 78%);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.message.user .bubble { background: var(--color-primary); color: #fff; box-shadow: none; }
 .label { font-size: 12px; opacity: .7; }
-.bubble p { margin: 4px 0 0; white-space: pre-wrap; }
+.bubble p { margin: var(--space-1) 0 0; white-space: pre-wrap; word-break: break-word; }
 
-.judge-tag { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+/* 判定标签：替代直接显示 [CORRECT]/[WRONG] */
+.judge-tag {
+  display: inline-block;
+  margin-top: var(--space-2);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+}
 .judge-tag.correct { background: #f0f9eb; color: #529b2e; }
-.judge-tag.wrong { background: #fdf6ec; color: #e6a23c; }
+.judge-tag.wrong { background: #fdf6ec; color: #b88230; }
 
-.input-area { display: flex; gap: 10px; padding-top: 10px; align-items: center; }
+.input-area { display: flex; gap: var(--space-3); padding-top: var(--space-3); align-items: center; }
 .input-area .el-input { flex: 1; }
 </style>
