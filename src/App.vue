@@ -27,7 +27,6 @@ import { clearAuth, readAuthUser, saveAuth, unwrapResult, userApi } from './api/
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default {
-  components: { HomeView, ChatView, SoupView },
   components: { HomeView, ChatView, SoupView, KbView },
   data() {
     return {
