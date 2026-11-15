@@ -20,6 +20,11 @@
         <h3>海龟汤模拟器</h3>
         <p>提问还原真相，考验你的推理能力</p>
       </div>
+      <div class="card" @click="$emit('select', 'kb')">
+        <div class="icon">📚</div>
+        <h3>题库助手</h3>
+        <p>RAG 语义检索海龟汤题库，推荐与引用出处</p>
+      </div>
     </div>
   </div>
 </template>

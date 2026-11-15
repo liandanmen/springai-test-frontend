@@ -2,6 +2,7 @@
   <HomeView v-if="view === 'home'" :user="user" @select="selectMode" @login="openLogin" @logout="logout" />
   <ChatView v-else-if="view === 'chat'" @back="view = 'home'" />
   <SoupView v-else-if="view === 'soup'" @back="view = 'home'" />
+  <KbView v-else-if="view === 'kb'" @back="view = 'home'" />
 
   <el-dialog v-model="loginVisible" :title="authMode === 'login' ? '用户登录' : '用户注册'" width="380px" @closed="resetForm">
     <p class="auth-tip">登录后才能使用 AI 聊天和海龟汤功能。</p>
@@ -21,11 +22,13 @@
 import HomeView from './views/HomeView.vue'
 import ChatView from './views/ChatView.vue'
 import SoupView from './views/SoupView.vue'
+import KbView from './views/KbView.vue'
 import { clearAuth, readAuthUser, saveAuth, unwrapResult, userApi } from './api/request'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default {
   components: { HomeView, ChatView, SoupView },
+  components: { HomeView, ChatView, SoupView, KbView },
   data() {
     return {
       view: 'home', user: readAuthUser(), loginVisible: false, authMode: 'login', submitting: false,
